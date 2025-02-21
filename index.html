@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PicShow</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            overflow: hidden;
+        }
+        .container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        .image-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-size: cover;
+            background-position: center;
+        }
+        img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        .controls {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+            z-index: 10; /* 确保控制按钮位于图片之上 */
+        }
+        .controls button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 0 10px;
+            background-color: rgba(255, 255, 255, 0.6); /* 半透明背景 */
+            border: none;
+            border-radius: 5px;
+        }
+        .description {
+            margin-top: 10px;
+            font-size: 18px;
+            position: absolute;
+            bottom: 60px;
+            width: 100%;
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.6); /* 半透明背景 */
+
+            z-index: 10; /* 确保描述位于图片之上 */
+        }
+        .image-stack img {
+            display: none; /* 隐藏图片堆栈中的所有图片 */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="image-stack">
+            <img src="image7.jpg" alt="Image 1">
+            <img src="image8.jpg" alt="Image 2">
+            <img src="image9.jpg" alt="Image 3">
+            <img src="image10.jpg" alt="Image 4">
+            <!-- 添加更多的图片路径 -->
+        </div>
+        <div class="image-container">
+            <img id="mainImage" src="" alt="图片展示">
+        </div>
+        <div class="description" id="imageDescription">
+            <!-- 图片描述将在这里显示 -->
+        </div>
+        <div class="controls">
+            <button id="prevButton">上一张</button>
+            <button id="playPauseButton">播放/暂停</button>
+            <button id="nextButton">下一张</button>
+        </div>
+    </div>
+
+    <script>
+        const imageStack = document.querySelectorAll('.image-stack img');
+
+        let currentIndex = 0;
+        let playInterval;
+        let isPlaying = true;
+        const mainImage = document.getElementById('mainImage');
+        const imageDescription = document.getElementById('imageDescription');
+
+        function updateImage() {
+            mainImage.src = imageStack[currentIndex].src;
+            imageDescription.textContent = `${currentIndex + 1}. ${imageTitles[currentIndex]} - ${imageDescriptions[currentIndex]}`;
+        }
+
+        function showNextImage() {
+            currentIndex = (currentIndex + 1) % imageStack.length;
+            updateImage();
+        }
+
+        function showPrevImage() {
+            currentIndex = (currentIndex - 1 + imageStack.length) % imageStack.length;
+            updateImage();
+        }
+
+        function togglePlayPause() {
+            if (isPlaying) {
+                clearInterval(playInterval);
+                document.getElementById('playPauseButton').textContent = '继续播放';
+            } else {
+                playInterval = setInterval(showNextImage, 4000);
+                document.getElementById('playPauseButton').textContent = '播放/暂停';
+            }
+            isPlaying = !isPlaying;
+        }
+
+        document.getElementById('nextButton').addEventListener('click', showNextImage);
+        document.getElementById('prevButton').addEventListener('click', showPrevImage);
+        document.getElementById('playPauseButton').addEventListener('click', togglePlayPause);
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowRight') {
+                showNextImage();
+            } else if (event.key === 'ArrowLeft') {
+                showPrevImage();
+            }
+        });
+
+        window.onload = () => {
+            updateImage();
+            playInterval = setInterval(showNextImage, 4000);
+        };
+    </script>
+</body>
+</html>
