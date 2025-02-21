@@ -19,7 +19,6 @@
             position: relative;
             width: 100%;
             height: 100%;
-            text-align: center;
         }
         .image-container {
             position: absolute;
@@ -34,19 +33,23 @@
         img {
             max-width: 100%;
             max-height: 100%;
-            object-fit: contain; /* 确保图片不会被裁剪 */
+            object-fit: contain;
         }
         .controls {
             position: absolute;
             bottom: 20px;
             width: 100%;
             text-align: center;
+            z-index: 10; /* 确保控制按钮位于图片之上 */
         }
         .controls button {
             padding: 10px 20px;
             font-size: 16px;
             cursor: pointer;
             margin: 0 10px;
+            background-color: rgba(255, 255, 255, 0.6); /* 半透明背景 */
+            border: none;
+            border-radius: 5px;
         }
         .description {
             margin-top: 10px;
@@ -55,17 +58,29 @@
             bottom: 60px;
             width: 100%;
             text-align: center;
-            background-color: rgba(255, 255, 255, 0.8); /* 半透明背景以便文字清晰显示 */
+            background-color: rgba(255, 255, 255, 0.6); /* 半透明背景 */
+
+            z-index: 10; /* 确保描述位于图片之上 */
+        }
+        .image-stack img {
+            display: none; /* 隐藏图片堆栈中的所有图片 */
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <div class="image-stack">
+            <img src="image7.jpg" alt="Image 1">
+            <img src="image8.jpg" alt="Image 2">
+            <img src="image9.jpg" alt="Image 3">
+            <img src="image10.jpg" alt="Image 4">
+            <!-- 添加更多的图片路径 -->
+        </div>
         <div class="image-container">
             <img id="mainImage" src="" alt="图片展示">
-            <div class="description" id="imageDescription">
-                <!-- 图片描述将在这里显示 -->
-            </div>
+        </div>
+        <div class="description" id="imageDescription">
+            <!-- 图片描述将在这里显示 -->
         </div>
         <div class="controls">
             <button id="prevButton">上一张</button>
@@ -75,53 +90,7 @@
     </div>
 
     <script>
-        const imageSources = [
-            'image7.jpg',
-            'image8.jpg',
-            'D:/Downloads/wallpaper_engine/image9.jpg',
-            'D:/Downloads/wallpaper_engine/image10.jpg',
-            'D:/Downloads/wallpaper_engine/image11.jpg',
-            'D:/Downloads/wallpaper_engine/image12.jpg',
-            'D:/Downloads/wallpaper_engine/image13.jpg',
-            'D:/Downloads/wallpaper_engine/image14.jpg',
-            'D:/Downloads/wallpaper_engine/image15.jpg',
-            'D:/Downloads/wallpaper_engine/image16.jpg',
-            'D:/Downloads/wallpaper_engine/image17.jpg',
-            'D:/Downloads/wallpaper_engine/image18.jpg',
-            'D:/Downloads/wallpaper_engine/image19.jpg',
-            'D:/Downloads/wallpaper_engine/image20.jpg',
-            'D:/Downloads/wallpaper_engine/image21.jpg',
-            'D:/Downloads/wallpaper_engine/image22.jpg',
-            'D:/Downloads/wallpaper_engine/image23.jpg',
-            'D:/Downloads/wallpaper_engine/image24.jpg',
-            'D:/Downloads/wallpaper_engine/image25.jpg',
-            'D:/Downloads/wallpaper_engine/image26.jpg',
-            'D:/Downloads/wallpaper_engine/image27.jpg',
-            'D:/Downloads/wallpaper_engine/image28.jpg',
-            'D:/Downloads/wallpaper_engine/image29.jpg',
-            'D:/Downloads/wallpaper_engine/image30.jpg',
-            'D:/Downloads/wallpaper_engine/image31.jpg',
-            'D:/Downloads/wallpaper_engine/image32.jpg',
-            'D:/Downloads/wallpaper_engine/image33.jpg',
-            'D:/Downloads/wallpaper_engine/image34.jpg',
-            'D:/Downloads/wallpaper_engine/image35.jpg',
-            'D:/Downloads/wallpaper_engine/image36.jpg',
-            'D:/Downloads/wallpaper_engine/image37.jpg',
-            'D:/Downloads/wallpaper_engine/image38.jpg',
-            'D:/Downloads/wallpaper_engine/image39.jpg',
-            'D:/Downloads/wallpaper_engine/image40.jpg',
-            'D:/Downloads/wallpaper_engine/image41.jpg',
-            'D:/Downloads/wallpaper_engine/image42.jpg',
-            'D:/Downloads/wallpaper_engine/image43.jpg',
-            'D:/Downloads/wallpaper_engine/image44.jpg',
-            'D:/Downloads/wallpaper_engine/image45.jpg',
-            'D:/Downloads/wallpaper_engine/image46.jpg',
-            'D:/Downloads/wallpaper_engine/image47.jpg',
-            'D:/Downloads/wallpaper_engine/image48.jpg',
-            'D:/Downloads/wallpaper_engine/image49.jpg',
-            'D:/Downloads/wallpaper_engine/image50.jpg'
-            // 添加更多的图片路径
-        ];
+        const imageStack = document.querySelectorAll('.image-stack img');
 
         let currentIndex = 0;
         let playInterval;
@@ -130,29 +99,29 @@
         const imageDescription = document.getElementById('imageDescription');
 
         function updateImage() {
-            mainImage.src = imageSources[currentIndex];
+            mainImage.src = imageStack[currentIndex].src;
             imageDescription.textContent = `${currentIndex + 1}. ${imageTitles[currentIndex]} - ${imageDescriptions[currentIndex]}`;
         }
 
         function showNextImage() {
-            currentIndex = (currentIndex + 1) % imageSources.length;
+            currentIndex = (currentIndex + 1) % imageStack.length;
             updateImage();
         }
 
         function showPrevImage() {
-            currentIndex = (currentIndex - 1 + imageSources.length) % imageSources.length;
+            currentIndex = (currentIndex - 1 + imageStack.length) % imageStack.length;
             updateImage();
         }
 
         function togglePlayPause() {
-            isPlaying = !isPlaying;
             if (isPlaying) {
-                playInterval = setInterval(showNextImage, 4000);
-                document.getElementById('playPauseButton').textContent = '播放/暂停';
-            } else {
                 clearInterval(playInterval);
                 document.getElementById('playPauseButton').textContent = '继续播放';
+            } else {
+                playInterval = setInterval(showNextImage, 4000);
+                document.getElementById('playPauseButton').textContent = '播放/暂停';
             }
+            isPlaying = !isPlaying;
         }
 
         document.getElementById('nextButton').addEventListener('click', showNextImage);
@@ -169,9 +138,7 @@
 
         window.onload = () => {
             updateImage();
-            if (isPlaying) {
-                playInterval = setInterval(showNextImage, 4000);
-            }
+            playInterval = setInterval(showNextImage, 4000);
         };
     </script>
 </body>
