@@ -38,32 +38,25 @@
         .controls {
             position: absolute;
             bottom: 20px;
-            width: 100%;
-            text-align: center;
-            z-index: 10; /* 确保控制按钮位于图片之上 */
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 10;
         }
         .controls button {
-            padding: 10px 20px;
-            font-size: 16px;
+            padding: 8px 16px;
+            font-size: 14px;
             cursor: pointer;
-            margin: 0 10px;
-            background-color: rgba(255, 255, 255, 0.6); /* 半透明背景 */
+            background-color: rgba(255, 255, 255, 0.8);
             border: none;
-            border-radius: 5px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
         }
-        .description {
-            margin-top: 10px;
-            font-size: 18px;
-            position: absolute;
-            bottom: 60px;
-            width: 100%;
-            text-align: center;
-            background-color: rgba(255, 255, 255, 0.6); /* 半透明背景 */
-
-            z-index: 10; /* 确保描述位于图片之上 */
+        .controls button:hover {
+            background-color: rgba(255, 255, 255, 0.95);
         }
         .image-stack img {
-            display: none; /* 隐藏图片堆栈中的所有图片 */
+            display: none;
         }
     </style>
 </head>
@@ -126,33 +119,26 @@
             <img src="image60.jpg" alt="Image 3">
             <img src="image61.jpg" alt="Image 4">
             <img src="image62.jpg" alt="Image 1">
-            <!-- 添加更多的图片路径 -->
         </div>
         <div class="image-container">
             <img id="mainImage" src="" alt="图片展示">
         </div>
-        <div class="description" id="imageDescription">
-            <!-- 图片描述将在这里显示 -->
-        </div>
         <div class="controls">
-            <button id="prevButton">上一张</button>
-            <button id="playPauseButton">播放/暂停</button>
-            <button id="nextButton">下一张</button>
+            <button id="prevButton">‹</button>
+            <button id="playPauseButton">❚❚</button>
+            <button id="nextButton">›</button>
         </div>
     </div>
 
     <script>
         const imageStack = document.querySelectorAll('.image-stack img');
-
         let currentIndex = 0;
         let playInterval;
         let isPlaying = true;
         const mainImage = document.getElementById('mainImage');
-        const imageDescription = document.getElementById('imageDescription');
 
         function updateImage() {
             mainImage.src = imageStack[currentIndex].src;
-            imageDescription.textContent = `${currentIndex + 1}. ${imageTitles[currentIndex]} - ${imageDescriptions[currentIndex]}`;
         }
 
         function showNextImage() {
@@ -168,10 +154,10 @@
         function togglePlayPause() {
             if (isPlaying) {
                 clearInterval(playInterval);
-                document.getElementById('playPauseButton').textContent = '继续播放';
+                document.getElementById('playPauseButton').textContent = '▶';
             } else {
                 playInterval = setInterval(showNextImage, 4000);
-                document.getElementById('playPauseButton').textContent = '播放/暂停';
+                document.getElementById('playPauseButton').textContent = '❚❚';
             }
             isPlaying = !isPlaying;
         }
@@ -181,11 +167,9 @@
         document.getElementById('playPauseButton').addEventListener('click', togglePlayPause);
 
         document.addEventListener('keydown', function(event) {
-            if (event.key === 'ArrowRight') {
-                showNextImage();
-            } else if (event.key === 'ArrowLeft') {
-                showPrevImage();
-            }
+            if (event.key === 'ArrowRight') showNextImage();
+            if (event.key === 'ArrowLeft') showPrevImage();
+            if (event.key === ' ') togglePlayPause();
         });
 
         window.onload = () => {
